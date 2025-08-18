@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta de Alumnos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f9;
+    }
+    h1 {
+      color: #333;
+    }
+    input, button {
+      padding: 8px;
+      margin: 5px;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      background: #fafafa;
+    }
+    .card h3 {
+      margin-top: 0;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <h1>Consulta de Alumnos</h1>
+  <input type="text" id="codigo" placeholder="Ingrese código del alumno">
+  <button onclick="buscarAlumno()">Buscar</button>
+
+  <div id="resultado"></div>
+
+  <script>
+    const url = "https://opensheet.elk.sh/1rgIZUp-K_ZiLwnecsV-B9N-k0X3Q8H9vea8bqZxDKvo/concentrado";
+
+    async function buscarAlumno() {
+      const codigo = document.getElementById("codigo").value.trim();
+      const res = await fetch(url);
+      const data = await res.json();
+      
+      const alumno = data.find(a => a.CODIGO === codigo);
+
+      if (!alumno) {
+        document.getElementById("resultado").innerHTML = "<p>No se encontró el alumno.</p>";
+        return;
+      }
+
+      document.getElementById("resultado").innerHTML = `
+        <div class="result">
+          <h2>${alumno.Nombre} (${alumno.Codigo})</h2>
+          <div class="grid">
+            <div class="card">
+              <h3>1er Contenido</h3>
+              <p><b>Trabajos:</b> ${alumno["TAREAS de 80 C1"] || "-"}</p>
+              <p><b>Prácticas:</b> ${alumno["Pract. 1. Tema Libre"] || "-"}</p>
+              <p><b>Proyecto:</b> ${alumno["Proyecto Tecnol y su entorno"] || "-"}</p>
+              <p><b>Fichas:</b> ${alumno["FICHAS 1 a la 10"] || "-"}</p>
+              <p><b>Calificación:</b> ${alumno["TOTAL DE CALIFICACION C1"] || "-"}</p>
+            </div>
+            <div class="card">
+              <h3>2do Contenido</h3>
+              <p><b>Trabajos:</b> ${alumno["TAREAS de 80 C2"] || "-"}</p>
+              <p><b>Prácticas:</b> ${alumno["2. Maq , herr, inst   3.Hipervinc"] || "-"}</p>
+              <p><b>Proyecto:</b> ${alumno["Proyecto Reciclaje ecologico"] || "-"}</p>
+              <p><b>Fichas:</b> ${alumno["FICHAS 11 a la 25"] || "-"}</p>
+              <p><b>Calificación:</b> ${alumno["TOTAL DE CALIFICACION C2"] || "-"}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
