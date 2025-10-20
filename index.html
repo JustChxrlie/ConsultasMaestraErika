@@ -67,6 +67,9 @@
           <h2>${alumno.Nombre} (${alumno.Codigo})</h2>
           <div class="grid">
             <div class="card">
+              <h3> Observaciones del alumno: </h3>
+              <p> ${alumno["Observaciones"] || "-"}</p>
+
               <h3>1er Contenido</h3>
               <p><b>Trabajos:</b> ${alumno["TAREAS de 80 C1"] || "-"}</p>
               <p><b>Prácticas:</b> ${alumno["Pract. 1. Tema Libre"] || "-"}</p>
@@ -89,3 +92,4 @@
   </script>
 </body>
 </html>
+
