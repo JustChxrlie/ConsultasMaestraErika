@@ -16,6 +16,16 @@
       padding: 8px;
       margin: 5px;
     }
+    button {
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #444;
+    }
     .result {
       margin-top: 20px;
       padding: 15px;
@@ -38,10 +48,17 @@
       margin-top: 0;
       color: #444;
     }
+    .observaciones {
+      border-left: 5px solid #f1c40f;
+      background: #fff8dc;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
-  <h1>Consulta de Alumnos</h1>
+  <h1>Consulta de Alumnos Escuela Secundaria Mixta 59</h1>
   <input type="text" id="codigo" placeholder="Ingrese código del alumno">
   <button onclick="buscarAlumno()">Buscar</button>
 
@@ -51,25 +68,37 @@
     const url = "https://opensheet.elk.sh/1rgIZUp-K_ZiLwnecsV-B9N-k0X3Q8H9vea8bqZxDKvo/concentrado";
 
     async function buscarAlumno() {
-      const codigo = document.getElementById("codigo").value.trim();
+      const codigo = document.getElementById("codigo").value.trim().toUpperCase();
       const res = await fetch(url);
       const data = await res.json();
       
-      const alumno = data.find(a => a.CODIGO === codigo);
+      // Se busca el alumno por coincidencia exacta en la columna CODIGO
+      const alumno = data.find(a => a.CODIGO && a.CODIGO.trim().toUpperCase() === codigo);
 
       if (!alumno) {
         document.getElementById("resultado").innerHTML = "<p>No se encontró el alumno.</p>";
         return;
       }
 
+      // Detecta el campo de observaciones aunque cambie el nombre
+      const observaciones =
+        alumno["Observaciones"] ||
+        alumno["OBSERVACIONES"] ||
+        alumno["Observacion"] ||
+        alumno["OBSERVACION"] ||
+        "-";
+
       document.getElementById("resultado").innerHTML = `
         <div class="result">
-          <h2>${alumno.Nombre} (${alumno.Codigo})</h2>
+          <h2>${alumno.Nombre || alumno.NOMBRE || "Sin nombre"} (${alumno.CODIGO})</h2>
+
+          <div class="observaciones">
+            <h3>📝 Observaciones del alumno:</h3>
+            <p>${observaciones}</p>
+          </div>
+
           <div class="grid">
             <div class="card">
-              <h3> Observaciones del alumno: </h3>
-              <p> ${alumno["Observaciones"] || "-"}</p>
-
               <h3>1er Contenido</h3>
               <p><b>Trabajos:</b> ${alumno["TAREAS de 80 C1"] || "-"}</p>
               <p><b>Prácticas:</b> ${alumno["Pract. 1. Tema Libre"] || "-"}</p>
@@ -77,6 +106,7 @@
               <p><b>Fichas:</b> ${alumno["FICHAS 1 a la 10"] || "-"}</p>
               <p><b>Calificación:</b> ${alumno["TOTAL DE CALIFICACION C1"] || "-"}</p>
             </div>
+
             <div class="card">
               <h3>2do Contenido</h3>
               <p><b>Trabajos:</b> ${alumno["TAREAS de 80 C2"] || "-"}</p>
@@ -92,4 +122,3 @@
   </script>
 </body>
 </html>
-
